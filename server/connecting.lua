@@ -55,7 +55,6 @@ if banCheck then
                     timeRemaining = BanInfo.date - os.time()
                     reason = BanInfo.reason
                     nickname = BanInfo.name
-                    print("Ban card time!")
                     PresentBanCard()
                     return
                 else

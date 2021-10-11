@@ -21,6 +21,11 @@ This menu comes with a fair amount of features, and we are always looking to exp
  - Utility action such as vehicle repair, plate change, clear area, entity deletion and much more
  - Weapon drop disabling & no vehicle rewards.
 
+## SQL
+
+We use oxmysql rather than MySQL Async here, you can download oxmysql here: https://forum.cfx.re/t/standalone-oxmysql-lightweight-mysql-wrapper/4755120
+If you would like MySQL async support, you can make an issue, maybe I'll add support.
+
 ## Onesync
 To use this, you must have Onesync Infinity enabled.<br>
 It will not work as designed otherwise!
@@ -35,10 +40,11 @@ Now follow the steps below!
 3. Once you're in, you can use `git clone https://github.com/FlawwsX/erp_adminmenu.git` and it will download the resource for you.
 4. After that, do `cd erp_adminmenu/web` and run `yarn`
 5. Now you can do `yarn build` and it should build the admin menu HTML files for production.
-6. Do make sure that you have something like `set discordWebhook "https://discord.com/webhook/...` in the server.cfg
-7. Add `exec "@erp_adminmenu/permissions.cfg"` to your server.cfg
-8. Fill in the `permissions.cfg` file.
-9. Start the resource using `ensure erp_adminmenu`
+6. Run the SQL file included, should be called `adminmenu.sql`
+7. Make sure you have `set discordWebhook "REPLACEMEWITHWEBHOOK"` in the server.cfg
+8. Add `exec "@erp_adminmenu/permissions.cfg"` to your server.cfg
+9. Fill in the `permissions.cfg` file.
+10. Start the resource using `ensure erp_adminmenu`
 
 ## Things to note
 

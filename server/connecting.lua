@@ -1,37 +1,34 @@
 local banCheck = true
 
-RegisterNetEvent('playerJoining', function()
-    local source = source
-
-    if banCheck then
+if banCheck then
+    AddEventHandler("playerConnecting", function(name, setKickReason, d)
+        local source = source
         d.defer()
 	    Wait(0) -- Needed
 	    d.update("Hi there, "..name.."! We're just checking your ban status, we won't be long!")
-    end
 
-    local steamid  = "Unidentified"
-    local license  = "Unidentified"
-    local discord  = "Unidentified"
-    local ip       = "Unidentified"
-    local fivem    = "Unidentified"
-
-    for k,v in pairs(GetPlayerIdentifiers(source))do            
-        if string.sub(v, 1, string.len("steam:")) == "steam:" then
-            steamid = v
-        elseif string.sub(v, 1, string.len("license:")) == "license:" then
-            license = v
-        elseif string.sub(v, 1, string.len("ip:")) == "ip:" then
-            ip = v
-        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
-            discord = v
-        elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
-            fivem = v
+        local steamid  = "Unidentified"
+        local license  = "Unidentified"
+        local discord  = "Unidentified"
+        local ip       = "Unidentified"
+        local fivem    = "Unidentified"
+    
+        for k,v in pairs(GetPlayerIdentifiers(source))do            
+            if string.sub(v, 1, string.len("steam:")) == "steam:" then
+                steamid = v
+            elseif string.sub(v, 1, string.len("license:")) == "license:" then
+                license = v
+            elseif string.sub(v, 1, string.len("ip:")) == "ip:" then
+                ip = v
+            elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+                discord = v
+            elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
+                fivem = v
+            end
         end
-    end
 
-    if banCheck then Wait(500) end
+        Wait(500)
 
-    if banCheck then
         local bans, isBanned, isPerma = exports['erp_adminmenu']:Bans(), false, false
         local banId, reason, nickname, timeRemaining
 
@@ -53,11 +50,12 @@ RegisterNetEvent('playerJoining', function()
                     isPerma, isBanned, banId, reason, nickname, timeRemaining = true, true, BanInfo['id'], BanInfo['reason'], BanInfo['name'], 69
                     PresentBanCard()
                     return
-                elseif (BanInfo.date - os.time() > 0) and (not isPerma) then
+                elseif BanInfo.date - os.time() > 0 then
                     isBanned, banId = true, BanInfo.id
                     timeRemaining = BanInfo.date - os.time()
                     reason = BanInfo.reason
                     nickname = BanInfo.name
+                    print("Ban card time!")
                     PresentBanCard()
                     return
                 else
@@ -69,6 +67,32 @@ RegisterNetEvent('playerJoining', function()
                     break
                 end
             end
+        end
+        
+        d.done()
+    end)
+end
+
+RegisterNetEvent('playerJoining', function()
+    local source = source
+
+    local steamid  = "Unidentified"
+    local license  = "Unidentified"
+    local discord  = "Unidentified"
+    local ip       = "Unidentified"
+    local fivem    = "Unidentified"
+
+    for k,v in pairs(GetPlayerIdentifiers(source))do            
+        if string.sub(v, 1, string.len("steam:")) == "steam:" then
+            steamid = v
+        elseif string.sub(v, 1, string.len("license:")) == "license:" then
+            license = v
+        elseif string.sub(v, 1, string.len("ip:")) == "ip:" then
+            ip = v
+        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+            discord = v
+        elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
+            fivem = v
         end
     end
     

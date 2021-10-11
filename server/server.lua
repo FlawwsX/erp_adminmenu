@@ -4,12 +4,14 @@ function RefreshBans()
 	if GetResourceState("oxmysql") == "started" then
   	exports.oxmysql:fetch("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
 	elseif GetResourceState("mysql-async") == "started" then
-		MySQL.Async.fetchAll("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
+		MySQL.Async.fetchAll("SELECT * FROM bannedplayers", {}, function(data) 
+			BannedPlayers = data 
+		end)
 	end
 end
 
 CreateThread(function()
-  Wait(1500)
+	Wait(1500)
 	RefreshBans()
 end)
 
@@ -143,7 +145,7 @@ RegisterNetEvent('erp_adminmenu:banPlayer', function(sentData)
 					fivem = fivem,
 					reason = reason, 
 					executioner = "Console",
-					date = time
+					date = json.encode(finalTime)
 				}, function(banId)
 					HandleBan(banId)
 				end)
@@ -157,7 +159,7 @@ RegisterNetEvent('erp_adminmenu:banPlayer', function(sentData)
 					fivem = fivem,
 					reason = reason, 
 					executioner = "Console",
-					date = time
+					date = json.encode(finalTime)
 				}, function(banId)
 					HandleBan(banId)
 				end)
@@ -308,7 +310,7 @@ RegisterNetEvent('erp_adminmenu:banPlayer:offline', function(time, name, reason,
 					fivem = fivem,
 					reason = reason, 
 					executioner = executioner,
-					date = json.encode(finalTime) 
+					date = json.encode(finalTime)
 				}, function(banId)
 					HandleBan(banId)
 				end)

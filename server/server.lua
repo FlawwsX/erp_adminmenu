@@ -1,13 +1,17 @@
 local BannedPlayers = {}
 
-CreateThread(function()
-  Wait(2000)
-  exports.oxmysql:fetch("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
-end)
-
 function RefreshBans()
-  exports.oxmysql:fetch("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
+	if GetResourceState("oxmysql") == "started" then
+  	exports.oxmysql:fetch("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
+	elseif GetResourceState("mysql-async") == "started" then
+		MySQL.Async.fetchAll("SELECT * FROM bannedplayers", {}, function(data) BannedPlayers = data end)
+	end
 end
+
+CreateThread(function()
+  Wait(1500)
+	RefreshBans()
+end)
 
 function Bans() return BannedPlayers end
 
@@ -118,17 +122,7 @@ RegisterNetEvent('erp_adminmenu:banPlayer', function(sentData)
 			local executioner = GetPlayerName(source)
 			local name = GetPlayerName(target)
 
-			exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
-				name = name,
-				steamid = steamid,
-				discord = discord,
-				license = license,
-				ip = ip,
-				fivem = fivem,
-				reason = reason, 
-				executioner = executioner,
-				date = json.encode(finalTime) 
-			}, function(banId)
+			local function HandleBan(banId)
 				if banId then
 					RefreshBans()
 					local message = "```Name: "..name.."\nBan ID: "..banId.."\nSteam: "..steamid.."\nFiveM: "..fivem.."\nDiscord: "..discord.."\nLicense: "..license.."\nIP: "..ip.."\nPunishment Type: Ban ("..time..")\nReason: "..reason.."\nExecutioner: "..executioner.."\n```"
@@ -137,7 +131,37 @@ RegisterNetEvent('erp_adminmenu:banPlayer', function(sentData)
 						if GetPlayerName(target) then DropPlayer(target, '🔨 Banned: '..reason) end
 					end
 				end
-			end)
+			end
+
+			if GetResourceState("oxmysql") == "started" then
+				exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
+					name = name,
+					steamid = steamid,
+					discord = discord,
+					license = license,
+					ip = ip,
+					fivem = fivem,
+					reason = reason, 
+					executioner = "Console",
+					date = time
+				}, function(banId)
+					HandleBan(banId)
+				end)
+			elseif GetResourceState("mysql-async") == "started" then
+				MySQL.Async.insert('INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (@name, @steamid, @discord, @license, @ip, @fivem, @reason, @executioner, @date)', { 
+					name = name,
+					steamid = steamid,
+					discord = discord,
+					license = license,
+					ip = ip,
+					fivem = fivem,
+					reason = reason, 
+					executioner = "Console",
+					date = time
+				}, function(banId)
+					HandleBan(banId)
+				end)
+			end
 		end
 	end
 end)
@@ -251,23 +275,44 @@ RegisterNetEvent('erp_adminmenu:banPlayer:offline', function(time, name, reason,
 			local finalTime = 69
 			if tonumber(time) ~= 69 then finalTime = os.time() + time end
 			local executioner = GetPlayerName(source)
-			exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
-				name = name,
-				steamid = steam,
-				discord = discord,
-				license = license,
-				ip = ip,
-				fivem = fivem,
-				reason = reason, 
-				executioner = executioner,
-				date = json.encode(finalTime) 
-			}, function(banId)
+
+			local function HandleBan(banId)
 				if banId then
 					RefreshBans()
 					local message = "```Name: "..name.."\nBan ID: "..banId.."\nSteam: "..steam.."\nFiveM: "..fivem.."\nDiscord: "..discord.."\nLicense: "..license.."\nIP: "..ip.."\nPunishment Type: Ban ("..time..")\nReason: "..reason.."\nExecutioner: "..executioner.."\n```"
 					sendToDiscord('Player (Offline) Banned', message, "16711680", GetConvar("discordWebhook", ""))
 				end
-			end)
+			end
+
+			if GetResourceState("oxmysql") == "started" then 
+				exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
+					name = name,
+					steamid = steam,
+					discord = discord,
+					license = license,
+					ip = ip,
+					fivem = fivem,
+					reason = reason, 
+					executioner = executioner,
+					date = json.encode(finalTime) 
+				}, function(banId)
+					HandleBan(banId)
+				end)
+			elseif GetResourceState("mysql-async") == "started" then
+				MySQL.Async.insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (@name, @steamid, @discord, @license, @ip, @fivem, @reason, @executioner, @date)", { 
+					name = name,
+					steamid = steam,
+					discord = discord,
+					license = license,
+					ip = ip,
+					fivem = fivem,
+					reason = reason, 
+					executioner = executioner,
+					date = json.encode(finalTime) 
+				}, function(banId)
+					HandleBan(banId)
+				end)
+			end
 		end
 	end
 end)
@@ -277,13 +322,23 @@ AddEventHandler('erp_adminmenu:unbanPlayer', function(banid)
     local source = source
     local banid = banid
     if IsPlayerAceAllowed(source, 'echorp.mod') and banid then
-        exports.oxmysql:execute("DELETE FROM bannedplayers WHERE id=:id", { id = tonumber(banid)}, function(result)
-            if result > 0 then
-                RefreshBans()
-                local message = "```The Ban ID "..banid.." has been unbanned by "..GetPlayerName(source).."```"
-                sendToDiscord('Player Unbanned', message, "16711680", GetConvar("discordWebhook", ""))
-            end
-        end)
+		if GetResourceState("oxmysql") == "started" then
+			exports.oxmysql:execute("DELETE FROM bannedplayers WHERE id=:id", { id = tonumber(banid)}, function(result)
+				if result > 0 then
+					RefreshBans()
+					local message = "```The Ban ID "..banid.." has been unbanned by "..GetPlayerName(source).."```"
+					sendToDiscord('Player Unbanned', message, "16711680", GetConvar("discordWebhook", ""))
+				end
+			end)
+		elseif GetResourceState("mysql-async") == "started" then
+			MySQL.Async.execute("DELETE FROM bannedplayers WHERE id=@id", { id = tonumber(banid)}, function(result)
+				if result > 0 then
+					RefreshBans()
+					local message = "```The Ban ID "..banid.." has been unbanned by "..GetPlayerName(source).."```"
+					sendToDiscord('Player Unbanned', message, "16711680", GetConvar("discordWebhook", ""))
+				end
+			end)
+		end
     end
 end)
 

@@ -23,8 +23,7 @@ This menu comes with a fair amount of features, and we are always looking to exp
 
 ## SQL
 
-We use oxmysql rather than MySQL Async here, you can download oxmysql here: https://forum.cfx.re/t/standalone-oxmysql-lightweight-mysql-wrapper/4755120
-If you would like MySQL async support, you can make an issue, maybe I'll add support.
+You can use oxmysql or MySQL async.<br>Either works here!
 
 ## Onesync
 To use this, you must have Onesync Infinity enabled.<br>

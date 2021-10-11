@@ -10,6 +10,8 @@ game "gta5"
 
 ui_page 'web/build/index.html'
 
+server_script '@mysql-async/lib/MySQL.lua'
+
 client_script "client/**/*"
 server_script "server/**/*"
 

@@ -61,7 +61,11 @@ RegisterNetEvent('playerJoining', function()
                     PresentBanCard()
                     return
                 else
-                    exports.oxmysql:execute("DELETE FROM bannedplayers WHERE id=:id", { id = BanInfo.id }, function(result) if result > 0 then exports['erp_adminmenu']:RefreshBans() end end)
+                    if GetResourceState("oxmysql") == "started" then
+                        exports.oxmysql:execute("DELETE FROM bannedplayers WHERE id=:id", { id = BanInfo.id }, function(result) if result > 0 then exports['erp_adminmenu']:RefreshBans() end end)
+                    elseif GetResourceState("mysql-async") == "started" then
+                        MySQL.Async.execute("DELETE FROM bannedplayers WHERE id=@id", { id = BanInfo.id }, function(result) if result > 0 then exports['erp_adminmenu']:RefreshBans() end end)
+                    end
                     break
                 end
             end

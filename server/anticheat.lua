@@ -618,51 +618,71 @@ end)
 function BanPlayer(playerId, reason, time)
 	local src = playerId
 	if src then
-			local identifiers = GetPlayerIdentifiers(src)
-			local name = GetPlayerName(src)
+		local identifiers = GetPlayerIdentifiers(src)
+		local name = GetPlayerName(src)
 
-			local steamid  = "Unidentified"
-			local license  = "Unidentified"
-			local discord  = "Unidentified"
-			local ip       = "Unidentified"
-			local fivem    = "Unidentified"
+		local steamid  = "Unidentified"
+		local license  = "Unidentified"
+		local discord  = "Unidentified"
+		local ip       = "Unidentified"
+		local fivem    = "Unidentified"
 	
-			for k,v in pairs(GetPlayerIdentifiers(src))do            
-					if string.sub(v, 1, string.len("steam:")) == "steam:" then
-							steamid = v
-					elseif string.sub(v, 1, string.len("license:")) == "license:" then
-							license = v
-					elseif string.sub(v, 1, string.len("ip:")) == "ip:" then
-							ip = v
-					elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
-							discord = v
-					elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
-							fivem = v
-					end
+		for k,v in pairs(GetPlayerIdentifiers(src))do            
+			if string.sub(v, 1, string.len("steam:")) == "steam:" then
+				steamid = v
+			elseif string.sub(v, 1, string.len("license:")) == "license:" then
+				license = v
+			elseif string.sub(v, 1, string.len("ip:")) == "ip:" then
+				ip = v
+			elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+				discord = v
+			elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
+				fivem = v
 			end
+		end
 
-			exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
-					name = name,
-					steamid = steamid,
-					discord = discord,
-					license = license,
-					ip = ip,
-					fivem = fivem,
-					reason = reason, 
-					executioner = "Console",
-					date = time
-			}, function(banId)
-					if banId then
-							RefreshBans()
-							local message = "```Name: "..name.."\nBan ID: "..banId.."\nSteam: "..steamid.."\nDiscord: "..discord.."\nFiveM: "..fivem.."\nLicense: "..license.."\nIP: "..ip.."\nPunishment Type: Ban ("..time..")\nReason: "..reason.."\nExecutioner: Console".."\n```"
-							sendToDiscord('Player Banned', message, "16711680", webhook)
-							if playerId ~= nil and playerId ~= "NULL" then
-									if GetPlayerName(playerId) then
-											DropPlayer(playerId, 'Banned: '..reason)
-									end
-							end
+		local function HandleBan(banId)
+			if banId then
+				RefreshBans()
+				local message = "```Name: "..name.."\nBan ID: "..banId.."\nSteam: "..steamid.."\nDiscord: "..discord.."\nFiveM: "..fivem.."\nLicense: "..license.."\nIP: "..ip.."\nPunishment Type: Ban ("..time..")\nReason: "..reason.."\nExecutioner: Console".."\n```"
+				sendToDiscord('Player Banned', message, "16711680", webhook)
+				if playerId ~= nil and playerId ~= "NULL" then
+					if GetPlayerName(playerId) then
+						DropPlayer(playerId, 'Banned: '..reason)
 					end
+				end
+			end
+		end
+
+		if GetResourceState("oxmysql") == "started" then
+			exports.oxmysql:insert("INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (:name, :steamid, :discord, :license, :ip, :fivem, :reason, :executioner, :date)", { 
+				name = name,
+				steamid = steamid,
+				discord = discord,
+				license = license,
+				ip = ip,
+				fivem = fivem,
+				reason = reason, 
+				executioner = "Console",
+				date = time
+			}, function(banId)
+				HandleBan(banId)
 			end)
+		elseif GetResourceState("mysql-async") == "started" then
+			MySQL.Async.insert('INSERT INTO bannedplayers (name, steamid, discord, license, ip, fivem, reason, executioner, date) VALUES (@name, @steamid, @discord, @license, @ip, @fivem, @reason, @executioner, @date)', { 
+				name = name,
+				steamid = steamid,
+				discord = discord,
+				license = license,
+				ip = ip,
+				fivem = fivem,
+				reason = reason, 
+				executioner = "Console",
+				date = time
+			}, function(banId)
+				HandleBan(banId)
+			end)
+		end
 	end
 end
 

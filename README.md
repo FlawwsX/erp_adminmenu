@@ -34,7 +34,7 @@ Now follow the steps below!
 2. Go to your FiveM resources folder using `cd destination/for/fivem/resources`
 3. Once you're in, you can use `git clone https://github.com/FlawwsX/erp_adminmenu.git` and it will download the resource for you.
 4. After that, do `cd erp_adminmenu/web` and run `yarn`
-5. Now you can do `npm run build` and it should build the admin menu HTML files for production.
+5. Now you can do `yarn build` and it should build the admin menu HTML files for production.
 6. Do make sure that you have something like `set discordWebhook "https://discord.com/webhook/...` in the server.cfg
 7. Add `exec "@erp_adminmenu/permissions.cfg"` to your server.cfg
 8. Fill in the `permissions.cfg` file.

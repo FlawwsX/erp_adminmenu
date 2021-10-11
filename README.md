@@ -41,9 +41,10 @@ Now follow the steps below!
 5. Now you can do `yarn build` and it should build the admin menu HTML files for production.
 6. Run the SQL file included, should be called `adminmenu.sql`
 7. Make sure you have `set discordWebhook "REPLACEMEWITHWEBHOOK"` in the server.cfg
-8. Add `exec "@erp_adminmenu/permissions.cfg"` to your server.cfg
-9. Fill in the `permissions.cfg` file.
-10. Start the resource using `ensure erp_adminmenu`
+8. Move the permissions.cfg file to the same directory as your server.cfg
+9. Add `exec permissions.cfg` to your server.cfg
+10. Fill in the `permissions.cfg` file.
+11. Start the resource using `ensure erp_adminmenu`
 
 ## Things to note
 

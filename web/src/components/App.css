@@ -1,0 +1,30 @@
+.App {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  color: white;
+}
+
+.avatarFlex {
+  display: flex;
+  flex-direction: row;
+}
+
+/* width */
+::-webkit-scrollbar {
+  display: none;
+}
+
+.playerItem {
+  display: flex;
+  flex-direction: row;
+}
+
+.banDialog {
+  margin-top: 5px;
+  padding-bottom: 15px;
+}
+
+.banReason {
+  margin-bottom: 10px;
+}

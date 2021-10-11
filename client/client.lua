@@ -31,7 +31,6 @@ end, false)
 RegisterNetEvent('erp_adminmenu:openAdminMenu', function(playerCount, maxPlayerCount)
   open = not open
   SetNuiFocus(open, open)
-  print("Admin menu open status:", open)
   SendReactMessage('setVisible', open) SendReactMessage('playerCount', playerCount) SendReactMessage('maxPlayerCount', maxPlayerCount)
 end)
 

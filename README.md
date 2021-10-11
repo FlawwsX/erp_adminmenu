@@ -45,6 +45,8 @@ Now follow the steps below!
 9. Add `exec permissions.cfg` to your server.cfg
 10. Fill in the `permissions.cfg` file.
 11. Start the resource using `ensure erp_adminmenu`
+12. Start the server, join and hit F10!
+13. Toggle NoClip using PAGEDOWN
 
 ## Things to note
 

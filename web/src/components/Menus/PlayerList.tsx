@@ -187,6 +187,10 @@ const PlayerList: React.FC<props> = (props) => {
 		})
 	}
 
+	const OrderedList = players.sort(function(a, b) {
+    return (a.id - b.id);
+	});
+
 	return (
 		<div>
 			<Dialog className="dialogBan" open={banOpen} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description2" >
@@ -225,7 +229,7 @@ const PlayerList: React.FC<props> = (props) => {
 				<Grid container spacing={2} maxWidth={750}>
 					<Grid item sx={{ width: '100%' }}>
 						<List dense={true}>
-							{players.filter(player => (player.name.toLowerCase().includes(search.toLowerCase()) || player.fivem.toLowerCase().includes(search.toLowerCase()) || player.discord.toLowerCase().includes(search.toLowerCase())) ).map(filteredPerson => (
+							{OrderedList.filter(player => (player.name.toLowerCase().includes(search.toLowerCase()) || player.fivem.toLowerCase().includes(search.toLowerCase()) || player.discord.toLowerCase().includes(search.toLowerCase())) ).map(filteredPerson => (
 								<PlayerItem banPlayerPrompt={banPlayerPrompt} online={filteredPerson.online} kickPlayerPrompt={kickPlayerPrompt} setNotifMessage={props.setNotifMessage} id={filteredPerson.id} steam={filteredPerson.steam} discord={filteredPerson.discord} fivem={filteredPerson.fivem} name={filteredPerson.name} note={filteredPerson.note} setIdentifier={setIdentifier} />
 							))}
 						</List>

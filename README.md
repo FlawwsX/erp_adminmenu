@@ -30,23 +30,23 @@ To use this, you must have Onesync Infinity enabled.<br>
 It will not work as designed otherwise!
 
 ## Setup
-The setup procedure is pretty simple, make sure that you have NPM, Yarn, Git and a working FiveM server enabled.
+The setup procedure is pretty simple, simply ensure you have a working FiveM server.
 
-Now follow the steps below!
+1. Head to https://github.com/FlawwsX/erp_adminmenu/releases
+2. Download the latest release ZIP file, e.g. `release-1.0.0.zip`
+3. Open the ZIP, extract the erp_adminmenu folder to your resources folder.
+5. Run the SQL file included, should be called `adminmenu.sql`
+6. Make sure you have `set discordWebhook "REPLACEMEWITHWEBHOOK"` in the server.cfg
+7. Move the permissions.cfg file to the same directory as your server.cfg
+8. Add `exec permissions.cfg` to your server.cfg
+9. Fill in the `permissions.cfg` file.
+10. Start the resource using `ensure erp_adminmenu`
+11. Enjoy!
 
-1. Open a Command Prompt
-2. Go to your FiveM resources folder using `cd destination/for/fivem/resources`
-3. Once you're in, you can use `git clone https://github.com/FlawwsX/erp_adminmenu.git` and it will download the resource for you.
-4. After that, do `cd erp_adminmenu/web` and run `yarn`
-5. Now you can do `yarn build` and it should build the admin menu HTML files for production.
-6. Run the SQL file included, should be called `adminmenu.sql`
-7. Make sure you have `set discordWebhook "REPLACEMEWITHWEBHOOK"` in the server.cfg
-8. Move the permissions.cfg file to the same directory as your server.cfg
-9. Add `exec permissions.cfg` to your server.cfg
-10. Fill in the `permissions.cfg` file.
-11. Start the resource using `ensure erp_adminmenu`
-12. Start the server, join and hit F10!
-13. Toggle NoClip using PAGEDOWN
+## Keybinds
+
+Upon installation, the default keybind to open the menu is F10 & PAGEDOWN to enable NoClip.
+Each user can customize these keybinds by heading to settings > key bindings > fivem.
 
 ## Things to note
 
